@@ -1,9 +1,10 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const { chats } = require("./data/data.js");
 const userRoutes = require("./routes/UserRoutes.js");
+const chatRoutes = require("./routes/ChatRoutes.js");
 const connectDB = require("./config/db.js");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware.js");
 
 const app = express();
 dotenv.config();
@@ -23,11 +24,15 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", userRoutes);
+app.use("/chat", chatRoutes);
 
-app.get("/api/chats/:id", (req, res) => {
-  const singleChat = chats.find((i) => i._id === req.params.id);
-  res.send(singleChat);
-});
+app.use(notFound);
+app.use(errorHandler);
+
+// app.get("/api/chats", (req, res) => {
+//   const singleChat = chats.find((i) => i._id === req.params.id);
+//   res.send(singleChat);
+// });
 
 const port = process.env.PORT || 5000;
 
